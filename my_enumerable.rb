@@ -211,7 +211,6 @@ module MyEnumerable
   end
 
   def my_min(value = nil)
-    
     case
     when value.nil?
       return nil unless size.positive?
@@ -241,29 +240,30 @@ module MyEnumerable
 
   def my_max
     return nil unless my_size.positive?
+
     case
     when value.nil?
-    manValue = self[0]
-    each do |_item|
-      each do |i|
-        manValue = i if manValue < i
+      manValue = self[0]
+      each do |_item|
+        each do |i|
+          manValue = i if manValue < i
+        end
       end
-    end
-    manValue
-  when !value.nil?
+      manValue
+    when !value.nil?
 
-    return [] unless size.positive?
+      return [] unless size.positive?
 
-    arr = self
-    minArr = []
-    i = 0
-    while i < value
-      minArr << arr.my_min
-      arr.delete(arr.my_min)
-      i += 1
+      arr = self
+      minArr = []
+      i = 0
+      while i < value
+        minArr << arr.my_min
+        arr.delete(arr.my_min)
+        i += 1
+      end
+      minArr
     end
-    minArr
-  end
   end
 end
 
