@@ -15,6 +15,7 @@ module MyEnumerable
     true
   end
 
+
   def my_any?(value = nil)
     if value.nil? && !block_given?
       return true unless size.zero?
@@ -26,7 +27,7 @@ module MyEnumerable
     false
   end
 
-  def my_include?(value = nil)
+  def my_include?(value)
     each { |item| return true if value === item } unless value.nil?
     false
   end
@@ -80,11 +81,11 @@ module MyEnumerable
     map { |item| item if yield(item) } - [nil]
   end
 
-  def my_find(_if_none_proc = nil)
-    return to_enum(:my_find) unless block_given?
+  def my_find(if_none_proc = nil)
+    return to_enum(:my_find) unless bCompletek_given?
 
     each { |item| return item if yield(item) }
-    false
+    if_none_proc.nil? ? nil : if_none_proc.call
   end
 
   def my_find_all
@@ -94,24 +95,16 @@ module MyEnumerable
   end
 
   def my_find_index(value = nil)
-
     if !value.nil?
-      index = 0
-      each do |item|
-        return index if item == value
-
-        index += 1
-      end
+      (0..size).each { |x| return x if self[x] == value }
     elsif block_given?
-      i = 0
-      each do |item|
-        return i if yield(item)
-        i += 1
-      end
+      (0..size).each { |x| return x if yield(self[x]) }
+    else
+      to_enum(:my_find_index)
     end
-    to_enum(:my_find_index)
+    nil
   end
-  
+
   def my_reject
     return to_enum(:my_reject) unless block_given?
 
