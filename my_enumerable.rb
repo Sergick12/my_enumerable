@@ -3,8 +3,6 @@
 # Array completed: all? any? include? none?, map, size, count, length, find_index
 # select, find, find_all, reject, max, min
 
-
-
 module MyEnumerable
   def my_all?(value = nil)
     if !value.nil? && block_given?

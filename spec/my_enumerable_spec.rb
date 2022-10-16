@@ -50,7 +50,7 @@ RSpec.describe MyEnumerable do
 
   describe '#my_map' do
     context 'when no argument and no block given' do
-      #it { expect(arr.my_map).to be <=> to_enum(:my_map)}
+      it { expect(arr.my_map) == arr.to_enum(:my_map) }
     end
 
     context 'when argument and no block given' do
@@ -58,10 +58,9 @@ RSpec.describe MyEnumerable do
     end
 
     context 'when block given' do
-      it { expect(arr.my_map { |i| i * i }).to eq([1, 4, 9, 16])}
+      it { expect(arr.my_map { |i| i * i }).to eq([1, 4, 9, 16]) }
     end
   end
-
 
   describe '#my_include?' do
     context 'when no argument and no block given' do
@@ -77,7 +76,7 @@ RSpec.describe MyEnumerable do
 
   describe '#my_select' do
     context 'when no argument and no block given' do
-      #it { expect { arr.my_select(2) }.to raise_error(ArgumentError) } Enumerable
+      it { expect(arr.my_select) == arr.to_enum(:my_reject) }
     end
 
     context 'when argument' do
@@ -103,13 +102,12 @@ RSpec.describe MyEnumerable do
   end
 
   describe '#my_max' do
-
     context 'when no argument and no block given' do
       it { expect(arr.my_max).to eq(4) }
     end
 
     context 'when argument' do
-     # it { expect{arr.my_max {}}.to raise_error(NoMethodError) }
+      # it { expect{arr.my_max {}}.to raise_error(NoMethodError) } доделать
     end
 
     context 'when block given' do
@@ -117,14 +115,12 @@ RSpec.describe MyEnumerable do
     end
   end
 
-
   describe '#my_reject' do
     context 'when no argument and no block given' do
     end
 
     context 'when argument' do
-     it { expect{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].my_reject(5)}.to raise_error(ArgumentError)}
-
+      it { expect { [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].my_reject(5) }.to raise_error(ArgumentError) }
     end
 
     context 'when block given' do
@@ -147,10 +143,11 @@ RSpec.describe MyEnumerable do
 
   describe '#my_find_all' do
     context 'when no argument and no block given' do
-    #  it { expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].my_find_all).to eq([3, 6, 9]) }
+      #  it { expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].my_find_all).to eq([3, 6, 9]) }
     end
 
     context 'when argument' do
+      #  it { expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].my_find_all).to eq([3, 6, 9]) }
     end
 
     context 'when block given' do
@@ -175,7 +172,7 @@ RSpec.describe MyEnumerable do
     context 'when no argument and no block given' do
       it { expect(arr1.my_count).to eq(4) }
     end
-    
+
     context 'when argument and no block given' do
       it { expect(arr1.my_count(2)).to eq(2) }
     end
