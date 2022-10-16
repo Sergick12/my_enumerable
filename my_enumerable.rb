@@ -3,18 +3,21 @@
 # Array completed: all? any? include? none?, map, size, count, length, find_index
 # select, find, find_all, reject, max, min
 
+
+
 module MyEnumerable
   def my_all?(value = nil)
-    if value.nil? && !block_given?
-      each { |item| return false unless item }
+    if !value.nil? && block_given?
+      warn("warning: given block not used\n", uplevel: 1)
     elsif !value.nil?
-      each { |item| return false unless value === item }
+      each { |x| return false unless value === x }
+    elsif block_given?
+      each { |x| return false unless yield(x) }
     else
-      each { |item| return false unless yield(item) }
+      each { |x| return false unless x }
     end
     true
   end
-
 
   def my_any?(value = nil)
     if value.nil? && !block_given?
@@ -82,7 +85,7 @@ module MyEnumerable
   end
 
   def my_find(if_none_proc = nil)
-    return to_enum(:my_find) unless bCompletek_given?
+    return to_enum(:my_find) unless block_given?
 
     each { |item| return item if yield(item) }
     if_none_proc.nil? ? nil : if_none_proc.call
@@ -143,3 +146,5 @@ end
 class Array
   include MyEnumerable
 end
+
+
