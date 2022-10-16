@@ -3,14 +3,18 @@
 # Array completed: all? any? include? none?, map, size, count, length, find_index
 # select, find, find_all, reject, max, min
 
+
+
 module MyEnumerable
   def my_all?(value = nil)
-    if value.nil? && !block_given?
-      each { |item| return false unless item }
+    if !value.nil? && block_given?
+      warn("warning: given block not used\n", uplevel: 1)
     elsif !value.nil?
-      each { |item| return false unless value === item }
+      each { |x| return false unless value === x }
+    elsif block_given?
+      each { |x| return false unless yield(x) }
     else
-      each { |item| return false unless yield(item) }
+      each { |x| return false unless x }
     end
     true
   end
@@ -26,7 +30,7 @@ module MyEnumerable
     false
   end
 
-  def my_include?(value = nil)
+  def my_include?(value)
     each { |item| return true if value === item } unless value.nil?
     false
   end
@@ -80,11 +84,11 @@ module MyEnumerable
     map { |item| item if yield(item) } - [nil]
   end
 
-  def my_find(_if_none_proc = nil)
+  def my_find(if_none_proc = nil)
     return to_enum(:my_find) unless block_given?
 
     each { |item| return item if yield(item) }
-    false
+    if_none_proc.nil? ? nil : if_none_proc.call
   end
 
   def my_find_all
@@ -94,24 +98,16 @@ module MyEnumerable
   end
 
   def my_find_index(value = nil)
-
     if !value.nil?
-      index = 0
-      each do |item|
-        return index if item == value
-
-        index += 1
-      end
+      (0..size).each { |x| return x if self[x] == value }
     elsif block_given?
-      i = 0
-      each do |item|
-        return i if yield(item)
-        i += 1
-      end
+      (0..size).each { |x| return x if yield(self[x]) }
+    else
+      to_enum(:my_find_index)
     end
-    to_enum(:my_find_index)
+    nil
   end
-  
+
   def my_reject
     return to_enum(:my_reject) unless block_given?
 
@@ -150,3 +146,5 @@ end
 class Array
   include MyEnumerable
 end
+
+
