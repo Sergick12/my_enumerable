@@ -5,9 +5,8 @@
 
 module MyEnumerable
   def my_all?(value = nil)
-    if !value.nil? && block_given?
+    if !value.nil?
       warn("warning: given block not used\n", uplevel: 1)
-    elsif !value.nil?
       each { |x| return false unless value === x }
     elsif block_given?
       each { |x| return false unless yield(x) }
@@ -35,6 +34,7 @@ module MyEnumerable
 
   def my_none?(value = nil)
     if value.nil? && !block_given?
+      warn('given block not used', uplevel: 1) if block_given?
       each { |item| return false if item }
     elsif !value.nil?
       each { |item| return false if value === item }
@@ -58,14 +58,16 @@ module MyEnumerable
     size
   end
 
-  def my_count(value = nil)
+  def my_count(object = nil)
     count = 0
-    if value.nil? && !block_given?
-      each { count += 1 }
-    elsif !value.nil?
-      each { |item| count += 1 if value == item }
+
+    if !object.nil?
+      warn('given block not used', uplevel: 1) if block_given?
+      each { |x| count += 1 if object == x }
+    elsif block_given?
+      each { |x| count += 1 if yield(x) }
     else
-      each { |item| count += 1 if yield(item) }
+      count = length
     end
     count
   end
@@ -115,7 +117,11 @@ module MyEnumerable
   def my_min(value = nil)
     if value.nil?
       min_value = self[0]
-      each { |i| min_value = i if min_value > i }
+      if block_given?
+        each { |i| min_value = i if yield(i, min_value).negative? }
+      else
+        each { |i| min_value = i if min_value > i }
+      end
       min_value
     else
       arr = self
@@ -129,7 +135,11 @@ module MyEnumerable
   def my_max(value = nil)
     if value.nil?
       max_value = self[0]
-      each { |i| max_value = i if max_value < i }
+      if block_given?
+        each { |i| max_value = i if yield(i, max_value).negative? }
+      else
+        each { |i| max_value = i if max_value < i }
+      end
       max_value
     else
       arr = self
@@ -144,5 +154,3 @@ end
 class Array
   include MyEnumerable
 end
-
-

@@ -69,9 +69,6 @@ RSpec.describe MyEnumerable do
     context 'when argument' do
       it { expect(arr.my_include?(2)).to eq(true) }
     end
-
-    context 'when block given' do
-    end
   end
 
   describe '#my_select' do
@@ -93,11 +90,12 @@ RSpec.describe MyEnumerable do
       it { expect(arr.my_min).to eq(1) }
     end
 
-    context 'when argument and no block given' do
+    context 'when argument' do
       it { expect(arr.my_min(2)).to eq([1, 2]) }
     end
 
     context 'when block given' do
+      it { expect(arr.my_min(3)).to eq([1, 2, 3]) }
     end
   end
 
@@ -107,9 +105,8 @@ RSpec.describe MyEnumerable do
     end
 
     context 'when argument' do
-      # it { expect{arr.my_max {}}.to raise_error(NoMethodError) } доделать
+      it { expect(arr.my_max(3)).to eq([4, 3, 2]) }
     end
-
     context 'when block given' do
       it { expect(arr.my_max(2)).to eq([4, 3]) }
     end
@@ -117,6 +114,7 @@ RSpec.describe MyEnumerable do
 
   describe '#my_reject' do
     context 'when no argument and no block given' do
+      it { expect(arr.my_reject) == arr.to_enum(:my_reject) }
     end
 
     context 'when argument' do
@@ -130,6 +128,7 @@ RSpec.describe MyEnumerable do
 
   describe '#my_find_index' do
     context 'when no argument and no block given' do
+      it { expect(arr.my_find_index) == arr.to_enum(:my_find_index) }
     end
 
     context 'when argument' do
@@ -143,13 +142,11 @@ RSpec.describe MyEnumerable do
 
   describe '#my_find_all' do
     context 'when no argument and no block given' do
-      #  it { expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].my_find_all).to eq([3, 6, 9]) }
+      it { expect(arr.my_find_all) == arr.to_enum(:my_find_all) }
     end
-
     context 'when argument' do
-      #  it { expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].my_find_all).to eq([3, 6, 9]) }
+      it { expect { arr.my_find_all(3) }.to raise_error(ArgumentError) }
     end
-
     context 'when block given' do
       it { expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].my_find_all { |element| (element % 3).zero? }).to eq([3, 6, 9]) }
     end
@@ -157,13 +154,28 @@ RSpec.describe MyEnumerable do
 
   describe '#my_find' do
     context 'when no argument and no block given' do
+      it { expect(arr.my_find) == arr.to_enum(:my_find) }
     end
-
-    context 'when argument and no block given' do
+    context 'when proc argument and no block given' do
+      it { expect(arr.my_find(proc { false })) == arr.to_enum(:my_find, proc { false }) }
     end
-
-    context 'when block given' do
-      it { expect([0, 1, 2, 3, 4, 5, 6, 7, 8, 9].my_find { |element| element > 2 }).to eq(3) }
+    context 'when proc argument and block given' do
+      it { expect(arr.my_find(proc { false }) { |x| x > 10 }).to eq(false) }
+      it { expect(arr.my_find(proc { false }) { |x| x > 2 }).to eq(3) }
+    end
+    context 'when no argument and block given' do
+      it { expect(arr.my_find { |x| x > 2 }).to eq(3) }
+      it { expect(arr.my_find { |x| x > 10 }).to eq(nil) }
+    end
+    context 'when argument != proc and block given' do
+      it { expect(arr.my_find(3) { |x| x > 2 }).to eq(3) }
+      it { expect { arr.my_find(3) { |x| x > 10 } }.to raise_error(NoMethodError) }
+    end
+    context 'when argument != proc and no block given' do
+      it { expect(arr.my_find(3)) == arr.to_enum(:my_find) }
+    end
+    context 'when empty array' do
+      it { expect([].my_find { |x| x > 2 }).to eq(nil) }
     end
   end
 
